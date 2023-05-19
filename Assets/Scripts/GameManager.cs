@@ -4,15 +4,30 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public bool haveBothPlayersPlayed = true;
+    bool hasPlayerOnePlayed = false;
+    bool hasPlayerTwoPlayed = false;
+    PlayMaker playMaker;
+
+        void Start()
+    {
+        
+    }
+    
+    void Update()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
+    public void RoundChange()
     {
-        
+        if (haveBothPlayersPlayed)
+        {
+            haveBothPlayersPlayed = false;
+            hasPlayerOnePlayed = false;
+            hasPlayerTwoPlayed = false;
+            playMaker.ResetButtons();
+            playMaker.ResetPlays();
+        }        
     }
 }

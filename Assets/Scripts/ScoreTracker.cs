@@ -9,22 +9,35 @@ public class ScoreTracker : MonoBehaviour
     int playerTwoPoints = 0;
     [SerializeField] TextMeshProUGUI pOnePointsText;
     [SerializeField] TextMeshProUGUI pTwoPointsText;
+    PlayMaker playMaker;
+    GameManager gameManager;
 
-    public void UpdateScore()
+    private void Awake()
+    {
+        playMaker = FindObjectOfType<PlayMaker>();
+        gameManager = FindObjectOfType<GameManager>();
+    }
+
+    void UpdateScore()
     {
         pOnePointsText.text = "POne Score: " + playerOnePoints;
         pTwoPointsText.text = "PTwo Score: " + playerTwoPoints;
+        //Debug.Log("POne Score" + playerOnePoints);
+        //Debug.Log("pTwo Score" + playerTwoPoints);
     }
-    public void CalculateScore(bool isPlayerOne, bool isDraw)
+    public void CalculateScore(bool pointsToPOne, bool isDraw)
     {
-        if (isPlayerOne && !isDraw)
+        if (pointsToPOne && !isDraw)
         {
             playerOnePoints++;
         }
-        else if (!isPlayerOne && !isDraw)
+        else if (!pointsToPOne && !isDraw)
         {
             playerTwoPoints++;
         }
+        UpdateScore();
+        //Debug.Log("calculateScoreWasCalled");
+        gameManager.ChangeRound();
     }
 
     public int GetPlayerOnePoints()
@@ -36,4 +49,11 @@ public class ScoreTracker : MonoBehaviour
     {
         return playerTwoPoints;
     }
+
+    /*void ChangeRound() NOW HAPPENS IN GAME MANAGER
+    {
+        playMaker.ResetPlayerBooleans();
+        playMaker.ResetButtons();
+        playMaker.ResetPlays();
+    }*/
 }

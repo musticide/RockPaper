@@ -22,6 +22,13 @@ public class PlayMaker : MonoBehaviour
     [SerializeField] Button pTwoPaperButton;
     [SerializeField] Button pTwoScissorsButton;
 
+    ScoreTracker scoreTracker;
+
+    private void Awake()
+    {
+        scoreTracker = FindObjectOfType<ScoreTracker>();
+    }
+
     public void OnPOneRockClick()
     {
         pOnePlay = 1;
@@ -56,8 +63,8 @@ public class PlayMaker : MonoBehaviour
     public void OnPTwoRockClick()
     {
         pTwoPlay = 1;
-        hasPOnePlayed = true;
-        SetPOneButtons(false);
+        hasPTwoPlayed = true;
+        SetPTwoButtons(false);
         if (hasPOnePlayed && hasPTwoPlayed)
         {
             RoundWinCheck();
@@ -66,8 +73,8 @@ public class PlayMaker : MonoBehaviour
     public void OnPTwoPaperClick()
     {
         pTwoPlay = 2;
-        hasPOnePlayed = true;
-        SetPOneButtons(false);
+        hasPTwoPlayed = true;
+        SetPTwoButtons(false);
         if (hasPOnePlayed && hasPTwoPlayed)
         {
             RoundWinCheck();
@@ -76,8 +83,8 @@ public class PlayMaker : MonoBehaviour
     public void OnPTwoScissorsClick()
     {
         pTwoPlay = 3;
-        hasPOnePlayed = true;
-        SetPOneButtons(false);
+        hasPTwoPlayed = true;
+        SetPTwoButtons(false);
         if (hasPOnePlayed && hasPTwoPlayed)
         {
             RoundWinCheck();
@@ -91,6 +98,7 @@ public class PlayMaker : MonoBehaviour
     }
     void RoundWinCheck()
     {
+        //Debug.Log("RoundWinCheck Was called");
         if (pOnePlay == 1)
         {
             if(pOnePlay == pTwoPlay)
@@ -137,6 +145,8 @@ public class PlayMaker : MonoBehaviour
                 hasPlayerOneScored = true;
             }
         }
+
+        scoreTracker.CalculateScore(hasPlayerOneScored, isDraw);
     }
 
     public void ResetButtons()
@@ -144,17 +154,24 @@ public class PlayMaker : MonoBehaviour
         SetPOneButtons(true);
         SetPTwoButtons(true);
     }
-    void SetPOneButtons(bool enable)
+    public void SetPOneButtons(bool enable)
     {
         pOneRockButton.interactable = enable;
         pOneScissorsButton.interactable = enable;
         pOnePaperButton.interactable = enable;
     }
 
-    void SetPTwoButtons(bool enable)
+    public void SetPTwoButtons(bool enable)
     {
         pTwoRockButton.interactable = enable;
         pTwoPaperButton.interactable = enable;
         pTwoScissorsButton.interactable = enable;
+    }
+
+    public void ResetPlayerBooleans()
+    {
+        hasPOnePlayed = false;
+        hasPTwoPlayed = false;
+        isDraw = false;
     }
 }

@@ -5,29 +5,41 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public bool haveBothPlayersPlayed = true;
-    bool hasPlayerOnePlayed = false;
-    bool hasPlayerTwoPlayed = false;
     PlayMaker playMaker;
+    ScoreTracker scoreTracker;
+    int pOnePoints;
+    int pTwoPoints;
 
-        void Start()
+    private void Awake()
+    {
+        playMaker = FindObjectOfType<PlayMaker>();
+        scoreTracker = FindObjectOfType<ScoreTracker>();
+    }
+    private void Start()
     {
         
     }
-    
-    void Update()
-    {
-        
-    }
 
-    public void RoundChange()
+    public void ChangeRound()
     {
-        if (haveBothPlayersPlayed)
+        playMaker.ResetPlayerBooleans();
+        playMaker.ResetButtons();
+        playMaker.ResetPlays();
+        pOnePoints = scoreTracker.GetPlayerOnePoints();
+        pTwoPoints = scoreTracker.GetPlayerTwoPoints();
+        
+        if (pOnePoints >= 3)
         {
-            haveBothPlayersPlayed = false;
-            hasPlayerOnePlayed = false;
-            hasPlayerTwoPlayed = false;
-            playMaker.ResetButtons();
-            playMaker.ResetPlays();
-        }        
+            Debug.Log("Player One Wins");
+            playMaker.SetPOneButtons(false);
+            playMaker.SetPTwoButtons(false);
+
+        }
+        else if (pTwoPoints >= 3)
+        {
+            Debug.Log("Player Two Wins");
+            playMaker.SetPOneButtons(false);
+            playMaker.SetPTwoButtons(false);
+        }
     }
 }

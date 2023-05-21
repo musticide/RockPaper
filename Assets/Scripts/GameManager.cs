@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class GameManager : MonoBehaviour
     int pTwoPoints;
     bool isDraw;
     bool hasPOneScored;
+    [SerializeField] GameObject playScreen;
+    [SerializeField] GameObject endScreen;
+    [SerializeField] GameObject pauseMenu;
+    [SerializeField] TextMeshProUGUI winnerText;
 
     private void Awake()
     {
@@ -21,7 +26,9 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        
+        playScreen.SetActive(true);
+        pauseMenu.SetActive(false);
+        endScreen.SetActive(false);
     }
 
     public void ChangeRound()
@@ -33,18 +40,8 @@ public class GameManager : MonoBehaviour
         playerTwo.SetHasPTwoPlayed(false);
         pOnePoints = scoreTracker.GetPlayerOnePoints();
         pTwoPoints = scoreTracker.GetPlayerTwoPoints();
-        
-        if (pOnePoints >= 3)
-        {
-            Debug.Log("Player One Wins");
-            SetPlayerInputs(false);
 
-        }
-        else if (pTwoPoints >= 3)
-        {
-            Debug.Log("Player Two Wins");
-            SetPlayerInputs(false);
-        }
+        WinCheck();
     }
 
     void SetPlayerInputs(bool var)
@@ -52,59 +49,99 @@ public class GameManager : MonoBehaviour
         playerOne.SetPOneButtons(var);
         playerTwo.SetPTwoButtons(var);
     }
-    public  void RoundWinCheck()
+    public void RoundWinCheck()
     {
-        //Debug.Log("RoundWinCheck Was called");
+        if(playerOne.GetHasPOnePlayed() && playerTwo.GetHasPTwoPlayed())
+        {        
+            Points();
+            scoreTracker.CalculateScore(hasPOneScored, isDraw);
+            ChangeRound();
+        }
+    }
+
+    void Points()
+    {
         int pOnePlay = playerOne.GetPOnePlay();
         int pTwoPlay = playerTwo.GetPTwoPlay();
-        if (pOnePlay == 1)
+        switch (pOnePlay)
         {
-            if (pOnePlay == pTwoPlay)
-            {
-                isDraw = true;
-            }
-            else if (pTwoPlay == 2)
-            {
-                hasPOneScored = false;
-            }
-            else
-            {
-                hasPOneScored = true;
-            }
-        }
+            case 1:
+                if (pOnePlay == pTwoPlay)
+                {
+                    isDraw = true;
+                }
+                else if (pTwoPlay == 2)
+                {
+                    hasPOneScored = false;
+                }
+                else
+                {
+                    hasPOneScored = true;
+                }
+                break;
+            
+            case 2:
+                if (pOnePlay == pTwoPlay)
+                {
+                    isDraw = true;
+                }
+                else if (pTwoPlay == 3)
+                {
+                    hasPOneScored = false;
+                }
+                else
+                {
+                    hasPOneScored = true;
+                }
+                break;
 
-        else if (pOnePlay == 2)
-        {
-            if (pOnePlay == pTwoPlay)
-            {
-                isDraw = true;
-            }
-            else if (pTwoPlay == 3)
-            {
-                hasPOneScored = false;
-            }
-            else
-            {
-                hasPOneScored = true;
-            }
+            case 3:
+                if (pOnePlay == pTwoPlay)
+                {
+                    isDraw = true;
+                }
+                else if (pTwoPlay == 1)
+                {
+                    hasPOneScored = false;
+                }
+                else
+                {
+                    hasPOneScored = true;
+                }
+                break;
         }
-        else if (pOnePlay == 3)
-        {
-            if (pOnePlay == pTwoPlay)
-            {
-                isDraw = true;
-            }
-            else if (pTwoPlay == 1)
-            {
-                hasPOneScored = false;
-            }
-            else
-            {
-                hasPOneScored = true;
-            }
-        }
+            
+    }
 
-        scoreTracker.CalculateScore(hasPOneScored, isDraw);
-        ChangeRound();
+    void WinCheck()
+    {
+        if (pOnePoints >= 3)
+        {
+            Debug.Log("Player One Wins!");
+            endScreen.SetActive(true);
+            playScreen.SetActive(false);
+            SetPlayerInputs(false);
+            winnerText.text = "Player One Wins!";
+        }
+        else if (pTwoPoints >= 3)
+        {
+            Debug.Log("Player Two Wins!");
+            endScreen.SetActive(true);
+            playScreen.SetActive(false);
+            SetPlayerInputs(false);
+            winnerText.text = "Player Two Wins!"; 
+        }
+    }
+
+    public void PauseGame()
+    {
+        pauseMenu.SetActive(true);
+        playScreen.SetActive(false);
+    }
+
+    public void ResumeGame()
+    {
+        pauseMenu.SetActive(false);
+        playScreen.SetActive(true);
     }
 }

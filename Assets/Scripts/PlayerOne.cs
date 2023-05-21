@@ -7,41 +7,36 @@ using UnityEngine.UI;
 public class PlayerOne : MonoBehaviour
 {
     bool hasPOnePlayed = false;
-    bool hasPTwoPlayed;
 
     int pOnePlay = 0;
 
     [Header("Buttons")]
-    [SerializeField] Button pOneRockButton;
-    [SerializeField] Button pOnePaperButton;
-    [SerializeField] Button pOneScissorsButton;
+    Button pOneRockButton;
+    Button pOnePaperButton;
+    Button pOneScissorsButton;
+    GameUI gameUI;
 
-    ScoreTracker scoreTracker;
-    PlayerTwo playerTwo;
     GameManager gameManager;
     private void Awake()
     {
-        scoreTracker = FindObjectOfType<ScoreTracker>();
-        playerTwo = FindObjectOfType<PlayerTwo>();
         gameManager = FindObjectOfType<GameManager>();
+        gameUI = FindObjectOfType<GameUI>();
     }
-
     private void Start()
     {
-        bool localHasPTwoPlayed = playerTwo.GetHasPTwoPlayed();
-
+        pOneRockButton = gameUI.GetPOneButtonAtIndex(0);
+        pOnePaperButton = gameUI.GetPOneButtonAtIndex(1);
+        pOneScissorsButton = gameUI.GetPOneButtonAtIndex(2);
+        gameUI.OnPOneClick = OnClickFunction;
     }
 
-//ON Button Clicks
+    //ON Button Clicks
     public void OnPOneRockClick()
     {
         pOnePlay = 1;
         hasPOnePlayed = true;
         SetPOneButtons(false);
-        if(hasPOnePlayed && playerTwo.GetHasPTwoPlayed())
-        {
-            gameManager.RoundWinCheck();
-        }
+        gameManager.RoundWinCheck();
     }
 
     public void OnPOnePaperClick()
@@ -49,29 +44,37 @@ public class PlayerOne : MonoBehaviour
         pOnePlay = 2;
         hasPOnePlayed = true;
         SetPOneButtons(false);
-        if (hasPOnePlayed && playerTwo.GetHasPTwoPlayed())
-        {
-            gameManager.RoundWinCheck();
-        }
+        gameManager.RoundWinCheck();
     }
     public void OnPOneScissorsClick()
     {
         pOnePlay = 3;
         hasPOnePlayed = true;
         SetPOneButtons(false);
-        if (hasPOnePlayed && playerTwo.GetHasPTwoPlayed())
+        gameManager.RoundWinCheck();
+    }
+
+    public void OnClickFunction(int index)
+    {
+        switch (index)
         {
-            gameManager.RoundWinCheck();
+            case 0:
+                OnPOneRockClick();
+                break;
+            case 1:
+                OnPOnePaperClick();
+                break;
+            case 2:
+                OnPOneScissorsClick();
+                break;
         }
     }
     
 //Set methods
     public void SetPOnePlay(int var)
     {
-        pOnePlay = var;
-       
+        pOnePlay = var; 
     }
-
     public void SetHasPOnePlayed(bool var)
     {
         hasPOnePlayed = var;
@@ -93,5 +96,4 @@ public class PlayerOne : MonoBehaviour
     {
         return hasPOnePlayed;
     }
-
 }

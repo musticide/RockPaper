@@ -28,10 +28,12 @@ public class ScoreTracker : MonoBehaviour
         if (pointsToPOne && !isDraw)
         {
             playerOnePoints++;
+            Debug.Log(playerOnePoints);
         }
         else if (!pointsToPOne && !isDraw)
         {
             playerTwoPoints++;
+            Debug.Log(playerTwoPoints);
         }
         UpdateScore();
     }
@@ -46,10 +48,4 @@ public class ScoreTracker : MonoBehaviour
         return playerTwoPoints;
     }
 
-    /*void ChangeRound() NOW HAPPENS IN GAME MANAGER
-    {
-        playMaker.ResetPlayerBooleans();
-        playMaker.ResetButtons();
-        playMaker.ResetPlays();
-    }*/
 }

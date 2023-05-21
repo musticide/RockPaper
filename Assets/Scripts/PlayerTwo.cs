@@ -11,23 +11,23 @@ public class PlayerTwo : MonoBehaviour
     int pTwoPlay = 0;
 
     [Header("Buttons")]
-    [SerializeField] Button pTwoRockButton;
-    [SerializeField] Button pTwoPaperButton;
-    [SerializeField] Button pTwoScissorsButton;
+    Button pTwoRockButton;
+    Button pTwoPaperButton;
+    Button pTwoScissorsButton;
+    GameUI gameUI;
 
-    ScoreTracker scoreTracker;
-    PlayerOne playerOne;
     GameManager gameManager;
     private void Awake()
     {
-        scoreTracker = FindObjectOfType<ScoreTracker>();
-        playerOne = FindObjectOfType<PlayerOne>();
         gameManager = FindObjectOfType<GameManager>();
+        gameUI = FindObjectOfType<GameUI>();
     }
-
     private void Start()
     {
-        
+        pTwoRockButton = gameUI.GetPTwoButtonAtIndex(0);
+        pTwoPaperButton = gameUI.GetPTwoButtonAtIndex(1);
+        pTwoScissorsButton = gameUI.GetPTwoButtonAtIndex(2);
+        gameUI.OnPTwoClick = OnClickFunction; 
     }
 
     //ON Button Clicks
@@ -36,10 +36,7 @@ public class PlayerTwo : MonoBehaviour
         pTwoPlay = 1;
         hasPTwoPlayed = true;
         SetPTwoButtons(false);
-        if (playerOne.GetHasPOnePlayed() && hasPTwoPlayed)
-        {
-            gameManager.RoundWinCheck();
-        }
+        gameManager.RoundWinCheck();
     }
 
     public void OnPTwoPaperClick()
@@ -47,27 +44,35 @@ public class PlayerTwo : MonoBehaviour
         pTwoPlay = 2;
         hasPTwoPlayed = true;
         SetPTwoButtons(false);
-        if (playerOne.GetHasPOnePlayed() && hasPTwoPlayed)
-        {
-            gameManager.RoundWinCheck();
-        }
+        gameManager.RoundWinCheck();
     }
     public void OnPTwoScissorsClick()
     {
         pTwoPlay = 3;
         hasPTwoPlayed = true;
         SetPTwoButtons(false);
-        if (playerOne.GetHasPOnePlayed() && hasPTwoPlayed)
-        {
-            gameManager.RoundWinCheck();
-        }
+        gameManager.RoundWinCheck();
     }
 
+    public void OnClickFunction(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                OnPTwoRockClick();
+                break;
+            case 1:
+                OnPTwoPaperClick();
+                break;
+            case 2:
+                OnPTwoScissorsClick();
+                break;
+        }
+    }
     //Set methods
     public void SetPTwoPlay(int var)
     {
         pTwoPlay = var;
-
     }
 
     public void SetHasPTwoPlayed(bool var)
@@ -91,5 +96,4 @@ public class PlayerTwo : MonoBehaviour
     {
         return hasPTwoPlayed;
     }
-
 }

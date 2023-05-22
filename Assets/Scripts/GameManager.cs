@@ -119,7 +119,7 @@ public class GameManager : MonoBehaviour
     {
         if (pOnePoints >= 3)
         {
-            Debug.Log("Player One Wins!");
+            //Debug.Log("Player One Wins!");
             endScreen.SetActive(true);
             playScreen.SetActive(false);
             SetPlayerInputs(false);
@@ -127,7 +127,7 @@ public class GameManager : MonoBehaviour
         }
         else if (pTwoPoints >= 3)
         {
-            Debug.Log("Player Two Wins!");
+            //Debug.Log("Player Two Wins!");
             endScreen.SetActive(true);
             playScreen.SetActive(false);
             SetPlayerInputs(false);

@@ -19,11 +19,6 @@ public class GameUI : MonoBehaviour
     PlayerOne playerOne;
     PlayerTwo playerTwo;
 
-    private void Awake()
-    {
-        //playerOne = FindObjectOfType<PlayerOne>();
-        //OnPOneClick = playerOne.OnPOneClickFunction;
-    }
     public void OnPOneButtonClick(int index)
     {
         playerOne = FindObjectOfType<PlayerOne>();
@@ -61,15 +56,17 @@ public class GameUI : MonoBehaviour
 
     public void SetPOneButtons(bool state)
     {
-        pOneButtons[0].interactable = state;
-        pOneButtons[1].interactable = state;
-        pOneButtons[2].interactable = state;
+        for (int i=0; i < 3; i++) 
+        { 
+            pOneButtons[i].interactable = state;
+        }
     }
 
     public void SetPTwoButtons(bool state)
     {
-        pTwoButtons[0].interactable = state;
-        pTwoButtons[1].interactable = state;
-        pTwoButtons[2].interactable = state;
+        for (int i =0; i<3; i++)
+        {
+            pTwoButtons[i].interactable = state;
+        }
     }
 }

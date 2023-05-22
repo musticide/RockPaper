@@ -22,10 +22,6 @@ public class PlayerTwo : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
         gameUI = FindObjectOfType<GameUI>();
     }
-    private void Start()
-    {
-
-    }
 
     //ON Button Clicks
     public void OnPTwoRockClick()

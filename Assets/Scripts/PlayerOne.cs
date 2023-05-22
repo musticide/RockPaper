@@ -20,8 +20,6 @@ public class PlayerOne : MonoBehaviour
     private void Awake()
     {
         gameManager = FindObjectOfType<GameManager>();
-        //gameUI = FindObjectOfType<GameUI>();
-        //gameUI.OnPOneClick = OnPOneClickFunction;
     }
     private void Start()
     {
@@ -72,7 +70,7 @@ public class PlayerOne : MonoBehaviour
 //Set methods
     public void SetPOnePlay(int var)
     {
-        pOnePlay = var; 
+        pOnePlay = var;
     }
     public void SetHasPOnePlayed(bool var)
     {

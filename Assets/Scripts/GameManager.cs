@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     PlayerOne playerOne;
     PlayerTwo playerTwo;
     ScoreTracker scoreTracker;
+    GameUI gameUI;
     int pOnePoints;
     int pTwoPoints;
     bool isDraw;
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour
         playerOne = FindObjectOfType<PlayerOne>();
         playerTwo = FindObjectOfType<PlayerTwo>();
         scoreTracker = FindObjectOfType<ScoreTracker>();
+        gameUI = FindObjectOfType<GameUI>();
     }
     private void Start()
     {
@@ -46,8 +48,8 @@ public class GameManager : MonoBehaviour
 
     void SetPlayerInputs(bool var)
     {
-        playerOne.SetPOneButtons(var);
-        playerTwo.SetPTwoButtons(var);
+        gameUI.SetPOneButtons(var);
+        gameUI.SetPTwoButtons(var);
     }
     public void RoundWinCheck()
     {

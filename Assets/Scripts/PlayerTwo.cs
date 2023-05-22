@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 using UnityEngine.UI;
+using Unity.Netcode;
 
 public class PlayerTwo : MonoBehaviour
 {
@@ -24,10 +24,7 @@ public class PlayerTwo : MonoBehaviour
     }
     private void Start()
     {
-        pTwoRockButton = gameUI.GetPTwoButtonAtIndex(0);
-        pTwoPaperButton = gameUI.GetPTwoButtonAtIndex(1);
-        pTwoScissorsButton = gameUI.GetPTwoButtonAtIndex(2);
-        gameUI.OnPTwoClick = OnClickFunction; 
+
     }
 
     //ON Button Clicks
@@ -35,7 +32,7 @@ public class PlayerTwo : MonoBehaviour
     {
         pTwoPlay = 1;
         hasPTwoPlayed = true;
-        SetPTwoButtons(false);
+        gameUI.SetPTwoButtons(false);
         gameManager.RoundWinCheck();
     }
 
@@ -43,18 +40,18 @@ public class PlayerTwo : MonoBehaviour
     {
         pTwoPlay = 2;
         hasPTwoPlayed = true;
-        SetPTwoButtons(false);
+        gameUI.SetPTwoButtons(false);
         gameManager.RoundWinCheck();
     }
     public void OnPTwoScissorsClick()
     {
         pTwoPlay = 3;
         hasPTwoPlayed = true;
-        SetPTwoButtons(false);
+        gameUI.SetPTwoButtons(false);
         gameManager.RoundWinCheck();
     }
 
-    public void OnClickFunction(int index)
+    public void OnPTwoClickFunction(int index)
     {
         switch (index)
         {
@@ -78,12 +75,6 @@ public class PlayerTwo : MonoBehaviour
     public void SetHasPTwoPlayed(bool var)
     {
         hasPTwoPlayed = var;
-    }
-    public void SetPTwoButtons(bool enable)
-    {
-        pTwoRockButton.interactable = enable;
-        pTwoScissorsButton.interactable = enable;
-        pTwoPaperButton.interactable = enable;
     }
 
     //Get methods

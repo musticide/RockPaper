@@ -16,13 +16,25 @@ public class GameUI : MonoBehaviour
     [SerializeField] GameObject pauseMenu;
     [SerializeField] GameObject playScreen;
 
+    PlayerOne playerOne;
+    PlayerTwo playerTwo;
+
+    private void Awake()
+    {
+        //playerOne = FindObjectOfType<PlayerOne>();
+        //OnPOneClick = playerOne.OnPOneClickFunction;
+    }
     public void OnPOneButtonClick(int index)
     {
+        playerOne = FindObjectOfType<PlayerOne>();
+        OnPOneClick = playerOne.OnPOneClickFunction;
         OnPOneClick(index);
     }
 
     public void OnPTwoButtonClick(int index)
     {
+        playerTwo = FindObjectOfType<PlayerTwo>();
+        OnPTwoClick = playerTwo.OnPTwoClickFunction;
         OnPTwoClick(index);
     }
 
@@ -45,5 +57,19 @@ public class GameUI : MonoBehaviour
     {
         pauseMenu.SetActive(false);
         playScreen.SetActive(true);
+    }
+
+    public void SetPOneButtons(bool state)
+    {
+        pOneButtons[0].interactable = state;
+        pOneButtons[1].interactable = state;
+        pOneButtons[2].interactable = state;
+    }
+
+    public void SetPTwoButtons(bool state)
+    {
+        pTwoButtons[0].interactable = state;
+        pTwoButtons[1].interactable = state;
+        pTwoButtons[2].interactable = state;
     }
 }

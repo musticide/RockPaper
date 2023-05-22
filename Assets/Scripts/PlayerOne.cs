@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 using UnityEngine.UI;
+using Unity.Netcode;
 
 public class PlayerOne : MonoBehaviour
 {
@@ -20,14 +20,12 @@ public class PlayerOne : MonoBehaviour
     private void Awake()
     {
         gameManager = FindObjectOfType<GameManager>();
-        gameUI = FindObjectOfType<GameUI>();
+        //gameUI = FindObjectOfType<GameUI>();
+        //gameUI.OnPOneClick = OnPOneClickFunction;
     }
     private void Start()
     {
-        pOneRockButton = gameUI.GetPOneButtonAtIndex(0);
-        pOnePaperButton = gameUI.GetPOneButtonAtIndex(1);
-        pOneScissorsButton = gameUI.GetPOneButtonAtIndex(2);
-        gameUI.OnPOneClick = OnClickFunction;
+        gameUI = FindObjectOfType<GameUI>();
     }
 
     //ON Button Clicks
@@ -35,7 +33,7 @@ public class PlayerOne : MonoBehaviour
     {
         pOnePlay = 1;
         hasPOnePlayed = true;
-        SetPOneButtons(false);
+        gameUI.SetPOneButtons(false);
         gameManager.RoundWinCheck();
     }
 
@@ -43,19 +41,20 @@ public class PlayerOne : MonoBehaviour
     {
         pOnePlay = 2;
         hasPOnePlayed = true;
-        SetPOneButtons(false);
+        gameUI.SetPOneButtons(false);
         gameManager.RoundWinCheck();
     }
     public void OnPOneScissorsClick()
     {
         pOnePlay = 3;
         hasPOnePlayed = true;
-        SetPOneButtons(false);
+        gameUI.SetPOneButtons(false);
         gameManager.RoundWinCheck();
     }
 
-    public void OnClickFunction(int index)
+    public void OnPOneClickFunction(int index)
     {
+        Debug.Log("OnclickfunctionWasCalled");
         switch (index)
         {
             case 0:
@@ -79,12 +78,7 @@ public class PlayerOne : MonoBehaviour
     {
         hasPOnePlayed = var;
     }
-    public void SetPOneButtons(bool enable)
-    {
-        pOneRockButton.interactable = enable;
-        pOneScissorsButton.interactable = enable;
-        pOnePaperButton.interactable = enable;
-    }
+
 
 //Get methods
     public int GetPOnePlay()

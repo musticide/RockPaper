@@ -7,21 +7,41 @@ public class Player : NetworkBehaviour
 {
     EventManager eventManager;
     //private int pOneChose;
-    NetworkVariable<int> pOneChose = new NetworkVariable<int>() ;
+    NetworkVariable<int> playerChose = new NetworkVariable<int>();
+    int playerID;
     private void Start()
     {
-        eventManager = FindObjectOfType<EventManager>();
-        eventManager.OnPOneClick.AddListener(SetPOneChose);
+
+        if (IsServer)
+        {
+            playerID = 0;
+        }
+        else
+        {
+            playerID = 1;
+        }
     }
 
-    private void SetPOneChose(int i)
+    public void SetPlayerChose(int i)
     {
-        pOneChose.Value = i;
-        Debug.Log("PlayerOne Presed" + pOneChose.Value);
+        playerChose.Value = i;
+        if (playerID == 0)
+        {
+            Debug.Log("PlayerOne Presed" + playerChose.Value);
+        }
+        else
+        {
+            Debug.Log("PlayerTwo Presed" + playerChose.Value);
+        }
     }
 
-    public int GetPOneChose()
+    public int GetPlayerChose()
     {
-        return pOneChose.Value;
+        return playerChose.Value;
+    }
+
+    public int GetPlayerID()
+    {
+        return playerID;
     }
 }

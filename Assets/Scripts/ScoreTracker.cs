@@ -48,5 +48,8 @@ public class ScoreTracker : MonoBehaviour
         return playerTwoPoints;
     }
 
-
+    public bool WinCheck(int i)
+    {
+        return true;
+    }
 }

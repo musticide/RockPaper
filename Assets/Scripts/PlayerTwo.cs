@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
 
-public class PlayerTwo : MonoBehaviour
+public class PlayerTwo : NetworkBehaviour
 {
     bool hasPTwoPlayed = false;
 

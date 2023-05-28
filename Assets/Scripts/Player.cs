@@ -50,6 +50,8 @@ public class Player : NetworkBehaviour
 
     public void ResetPlayerPlayed()
     {
+        if (!IsOwner) return;
         playerPlayed.Value = false;
     }
+
 }

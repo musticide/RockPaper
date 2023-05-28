@@ -30,18 +30,19 @@ public class GameUI : MonoBehaviour
     {
         return playerButtons[i];
     }
-    public void SetPlayerButtons(bool state, bool forPlayerOne)
+    public void SetPlayerButtons(bool state)
     {
         for(int i = 0; i < playerButtons.Length; i++)
         {
-            if (forPlayerOne)
+            playerButtons[i].interactable = state;
+            /*if (forPlayerOne)
             {
                 playerButtons[i].interactable = state;
             }
             else
             {
                 //pTwoButtons[i].interactable = state;
-            }
+            }*/
         }
     }
 

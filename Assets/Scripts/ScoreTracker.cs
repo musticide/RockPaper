@@ -1,153 +1,61 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 using Unity.Netcode;
 using System;
+using UnityEngine.Events;
 
 public class ScoreTracker : NetworkBehaviour
-{
-    NetworkVariable<int> playerOnePoints = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone);
-    NetworkVariable<int> playerTwoPoints = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone);
-    //int playerOnePoints = 0;
-    //int playerTwoPoints = 0;
-    [SerializeField] TextMeshProUGUI pOnePointsText;
-    [SerializeField] TextMeshProUGUI pTwoPointsText;
-    GameManager gameManager;
-    GameUI gameUI;
-    List <Player> playerList;
-    Player[] allPlayers;
+{    
     Player playerOne;
-    Player playerTwo;
-    NetworkVariable<bool> isDraw = new NetworkVariable<bool>(false);
-    NetworkVariable<bool> playerOneScored = new NetworkVariable<bool>(false);
-    //bool isDraw;
-    //bool playerOneScored;
-
+    private Player playerTwo;
+    public UnityEvent ResetEvent;
+    NetworkVariable<bool> bothHavePlayed = new NetworkVariable<bool>(false);
+    private void Update()
+    {
+        
+    }
     private void Awake()
     {
-        gameManager = FindObjectOfType<GameManager>();
-        gameUI = FindObjectOfType<GameUI>();
+        Initialize();
     }
 
-    public void OnClientJoin()
+    void Initialize()
     {
-        allPlayers = FindObjectsOfType<Player>();
-        playerList = new List<Player>(allPlayers);
-        if(playerList.Count > 1)
-        {
-            playerOne = playerList[0];
-            Debug.Log("Player One Client ID: " + playerOne.OwnerClientId);
-            playerList.Remove(playerOne);
-            playerTwo = playerList[0];
-            Debug.Log("Player Two Client ID: " + playerTwo.OwnerClientId);
-            playerOne.playerPlayed.OnValueChanged += delegate { RoundComplete(); };
-            playerTwo.playerPlayed.OnValueChanged += delegate { RoundComplete(); };
-        }
-        else
+        bothHavePlayed.OnValueChanged = delegate { CheckPoints() ; };
+    }
+    public void OnClientJoin()
+    {        
+        Player[] playerArray;
+        playerArray = FindObjectsOfType<Player>();        
+        if (playerArray.Length < 2)
         {
             return;
         }
-    }
-
-
-    public void RoundComplete()
-    {
-        if(IsOwner)gameUI.SetPlayerButtons(false);
-        if (playerOne.GetPlayerPlayed() && playerTwo.GetPlayerPlayed())
+        else if (playerArray.Length == 2)
         {
-            Debug.Log("Player 1 has played: " + playerOne.GetPlayerPlayed());
-            Debug.Log("Player 2 has played: " + playerTwo.GetPlayerPlayed());
-            NextRound();
-        }
+            playerOne = playerArray[0];
+            Debug.Log("Player One: " + playerOne.OwnerClientId);
+            playerTwo = playerArray[1];
+            Debug.Log("Player Two: " + playerTwo.OwnerClientId);
+            playerOne.hasPlayed.OnValueChanged = delegate { BothInputsRecieved();};
+            playerTwo.hasPlayed.OnValueChanged = delegate { BothInputsRecieved();};
+        }       
     }
-    void NextRound()
+    void BothInputsRecieved()
     {
-        RoundWinCheck();
-        CalculateScore(playerOneScored.Value, isDraw.Value);
-        UpdateScore();
-        ResetPlayed();
-    }
-    public void RoundWinCheck()
-    {
-        switch (playerOne.GetPlayerChose())
+        if (playerOne.hasPlayed.Value && playerTwo.hasPlayed.Value)
         {
-            case 0:
-                if(playerOne.GetPlayerChose() == playerTwo.GetPlayerChose())
-                {
-                    isDraw.Value = true;
-                }
-                else if(playerTwo.GetPlayerChose() == 1)
-                {
-                    playerOneScored.Value = false;
-                }
-                else
-                {
-                    playerOneScored.Value = true;
-                }
-                break;
-            case 1:
-                if (playerOne.GetPlayerChose() == playerTwo.GetPlayerChose())
-                {
-                    isDraw.Value = true;
-                }
-                else if (playerTwo.GetPlayerChose() == 2)
-                {
-                    playerOneScored.Value = false;
-                }
-                else
-                {
-                    playerOneScored.Value = true;
-                }
-                break;
-            case 2:
-                if (playerOne.GetPlayerChose() == playerTwo.GetPlayerChose())
-                {
-                    isDraw.Value = true;
-                }
-                else if (playerTwo.GetPlayerChose() == 0)
-                {
-                    playerOneScored.Value = false;
-                }
-                else
-                {
-                    playerOneScored.Value = true;
-                }
-                break;
+            if (!IsClient) { 
+            Debug.Log("Both players have played");
+            bothHavePlayed.Value = true;
+            }           
         }
     }
 
-    private void ResetPlayed()
+    void CheckPoints()
     {
-        playerOne.ResetPlayerPlayed();
-        playerTwo.ResetPlayerPlayed();
-        gameUI.SetPlayerButtons(true);
-        isDraw.Value = false;
-        playerOneScored.Value = false;
-        Debug.Log("ResetPlayed was Called");
+        Debug.Log("both play value" + bothHavePlayed.Value);
+        ResetEvent.Invoke();
     }
-
-    public void CalculateScore(bool pointsToPOne, bool isDraw)
-    {
-        if (pointsToPOne && !isDraw)
-        {
-            playerOnePoints.Value++;
-            Debug.Log(playerOnePoints);
-        }
-        else if (!pointsToPOne && !isDraw)
-        {
-            playerTwoPoints.Value++;
-            Debug.Log(playerTwoPoints);
-        }
-        UpdateScore();
-
-    }
-    void UpdateScore()
-    {
-        pOnePointsText.text = "Player One Score: " + playerOnePoints.Value;
-        pTwoPointsText.text = "Player Two Score: " + playerTwoPoints.Value;
-        //Debug.Log("POne Score" + playerOnePoints);
-        //Debug.Log("pTwo Score" + playerTwoPoints);
-    }
-
-}
+}    

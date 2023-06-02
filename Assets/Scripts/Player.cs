@@ -30,10 +30,10 @@ public class Player : NetworkBehaviour
             SetPlayerChose(2);
         });
         scoreTracker.OnClientJoin();
-        /*scoreTracker.ResetEvent.AddListener(() =>
+        scoreTracker.ResetEvent.AddListener(() =>
         {
             ResetHasPlayed();
-        });*/
+        });
 
     }
     private void Update()
@@ -46,6 +46,7 @@ public class Player : NetworkBehaviour
         if (!IsOwner) return;
         playerChose.Value = i;
         hasPlayed.Value = true;
+        gameUI.SetButtonState(false);
         //Debug.Log("player: " + OwnerClientId + "Chose: " + playerChose.Value);
     }
 
@@ -53,6 +54,7 @@ public class Player : NetworkBehaviour
     {
         if (!IsOwner) return;
         hasPlayed.Value = false;
+        gameUI.SetButtonState(true);
         //Debug.Log("Resetted id: " + OwnerClientId + " : " + hasPlayed.Value);
     }
 

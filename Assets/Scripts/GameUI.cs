@@ -38,19 +38,18 @@ public class GameUI : MonoBehaviour
     {
         return playerButtons[i];
     }
-    public void SetPlayerButtons(bool state)
-    {
-        for(int i = 0; i < playerButtons.Length; i++)
-        {
-            playerButtons[i].interactable = state;
-        }
-    }
 
-    void SetButtonState(bool state)
+    public void SetButtonState(bool state)
     {
         foreach(Button button in playerButtons)
         {
             button.interactable = state;
         }
+    }
+
+    public void UpdateScoreText(int playerOnePoints, int playerTwoPoints)
+    {
+        pOnePointsText.text = "Player One: " + playerOnePoints;
+        pTwoPointsText.text = "Player Two: " + playerTwoPoints;
     }
 }

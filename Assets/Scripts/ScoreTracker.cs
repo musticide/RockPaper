@@ -8,10 +8,13 @@ using TMPro;
 
 public class ScoreTracker : NetworkBehaviour
 {    
+    //references
     private Player playerOne;
     private Player playerTwo;
-    public UnityEvent ResetEvent;
     [SerializeField] TextMeshProUGUI clientIDText;
+    GameUI gameUI;
+
+    public UnityEvent ResetEvent;    
     NetworkVariable<bool> bothHavePlayed = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     NetworkVariable<bool> isDraw = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);    
     private void Update()
@@ -21,11 +24,13 @@ public class ScoreTracker : NetworkBehaviour
     private void Awake()
     {
         Initialize();
+        gameUI = FindObjectOfType<GameUI>();
     }
 
     void Initialize()
     {
-        bothHavePlayed.OnValueChanged = delegate { CheckPoints() ; };
+        bothHavePlayed.OnValueChanged = delegate { Invoke("CheckPoints", 0.3f); };
+        isDraw.OnValueChanged = delegate { ResetParameters(); };
     }
     public void OnClientJoin()
     {        
@@ -37,18 +42,17 @@ public class ScoreTracker : NetworkBehaviour
         }
         else if (playerArray.Length == 2)
         {
-            playerOne = playerArray[0];
-            //Debug.Log("Player One: " + playerOne.OwnerClientId);
-            playerTwo = playerArray[1];
-            //Debug.Log("Player Two: " + playerTwo.OwnerClientId);
-            playerOne.hasPlayed.OnValueChanged = delegate { BothInputsRecieved();};
-            playerTwo.hasPlayed.OnValueChanged = delegate { BothInputsRecieved();};                       
+            playerOne = playerArray[0];            
+            playerTwo = playerArray[1];            
+            playerOne.hasPlayed.OnValueChanged = delegate { Invoke("PlayerInputRecieved", 0.3f);};
+            playerOne.points.OnValueChanged = delegate { UpdateScore(); };
+            playerTwo.hasPlayed.OnValueChanged = delegate { Invoke("PlayerInputRecieved", 0.3f); };
+            playerTwo.points.OnValueChanged = delegate { UpdateScore(); };
+
         }       
     }
-    void BothInputsRecieved()
-    {
-        //Debug.Log("Player " + playerOne.OwnerClientId + "has Played = " + playerOne.hasPlayed.Value);
-        //Debug.Log("Player " + playerTwo.OwnerClientId + "has Played = " + playerTwo.hasPlayed.Value);
+    void PlayerInputRecieved()
+    {        
         if (playerOne.hasPlayed.Value && playerTwo.hasPlayed.Value)
         {
             if (IsServer) { 
@@ -62,17 +66,13 @@ public class ScoreTracker : NetworkBehaviour
     {
         if (!bothHavePlayed.Value) return;
         Debug.Log("Check Points Was Called");
-        Debug.Log("player: " + playerOne.OwnerClientId + "Chose: " + playerOne.playerChose.Value);
-        Debug.Log("player: " + playerTwo.OwnerClientId + "Chose: " + playerTwo.playerChose.Value);
         switch (playerOne.playerChose.Value)
         {
             case 0:
-                Debug.Log("Case Zero");
                 switch (playerTwo.playerChose.Value)
                 {
                     case 0:
-                        if (!IsServer) return;
-                        Debug.Log("Case Draw");
+                        if (!IsServer) return;                        
                         isDraw.Value = true;
                         break;
                     case 1:
@@ -113,8 +113,8 @@ public class ScoreTracker : NetworkBehaviour
                         break;
                 }
                 break;
-        }        
-        //ResetEvent.Invoke();
+        }
+        ResetParameters();
     }
 
     void IncrementPlayerOnePoints()
@@ -130,5 +130,17 @@ public class ScoreTracker : NetworkBehaviour
         if (!IsServer) return;
         playerTwo.points.Value++;
         Debug.Log("Player Two Points: " + playerTwo.points.Value);
+    }
+
+    void UpdateScore()
+    {
+        gameUI.UpdateScoreText(playerOne.points.Value, playerTwo.points.Value);
+    }
+    void ResetParameters()
+    {
+        ResetEvent.Invoke();
+        if (!IsServer) return;
+        bothHavePlayed.Value = false;
+        isDraw.Value = false;
     }
 }    

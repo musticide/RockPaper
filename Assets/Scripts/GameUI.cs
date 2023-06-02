@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Unity.Netcode;
 using TMPro;
 
-public class GameUI : NetworkBehaviour
+public class GameUI : MonoBehaviour
 {
     [Header("Buttons")]
 
@@ -31,8 +31,7 @@ public class GameUI : NetworkBehaviour
     }
     /*void Initialize()
     {
-        scoreTracker.playerOnePoints.OnValueChanged += delegate { pOnePointsText.text = "Player One Score: " + scoreTracker.playerOnePoints.Value; };
-        scoreTracker.playerTwoPoints.OnValueChanged += delegate { pTwoPointsText.text = "Player Two Score: " + scoreTracker.playerTwoPoints.Value; };
+        
     }*/
 
     public Button GetButton(int i)
@@ -44,6 +43,14 @@ public class GameUI : NetworkBehaviour
         for(int i = 0; i < playerButtons.Length; i++)
         {
             playerButtons[i].interactable = state;
+        }
+    }
+
+    void SetButtonState(bool state)
+    {
+        foreach(Button button in playerButtons)
+        {
+            button.interactable = state;
         }
     }
 }

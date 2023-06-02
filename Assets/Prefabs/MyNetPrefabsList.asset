@@ -15,21 +15,6 @@ MonoBehaviour:
   IsDefault: 0
   List:
   - Override: 0
-    Prefab: {fileID: 8912766456168801386, guid: a7c865f3311b2cc4990aae34efb2d10f, type: 3}
-    SourcePrefabToOverride: {fileID: 0}
-    SourceHashToOverride: 0
-    OverridingTargetPrefab: {fileID: 0}
-  - Override: 0
-    Prefab: {fileID: 512784531040494020, guid: 3601a05bd87bca842a8d0aa65c9cc93a, type: 3}
-    SourcePrefabToOverride: {fileID: 0}
-    SourceHashToOverride: 0
-    OverridingTargetPrefab: {fileID: 0}
-  - Override: 0
-    Prefab: {fileID: 8998865409860464740, guid: 3ea22e7282b42a949a1ac04c71e05f74, type: 3}
-    SourcePrefabToOverride: {fileID: 0}
-    SourceHashToOverride: 0
-    OverridingTargetPrefab: {fileID: 0}
-  - Override: 0
     Prefab: {fileID: 3521143451192537473, guid: b370d2d7d2bf684439684b27ff097d2a, type: 3}
     SourcePrefabToOverride: {fileID: 0}
     SourceHashToOverride: 0

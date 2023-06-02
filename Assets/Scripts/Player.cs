@@ -9,9 +9,10 @@ public class Player : NetworkBehaviour
 {
     public NetworkVariable<int> playerChose = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     public NetworkVariable<bool> hasPlayed = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    public NetworkVariable<int> points = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     GameUI gameUI;
     ScoreTracker scoreTracker;
-    UnityEvent testEvent;
+    
     private void Start()
     {
         gameUI = FindObjectOfType<GameUI>();
@@ -29,10 +30,10 @@ public class Player : NetworkBehaviour
             SetPlayerChose(2);
         });
         scoreTracker.OnClientJoin();
-        scoreTracker.ResetEvent.AddListener(() =>
+        /*scoreTracker.ResetEvent.AddListener(() =>
         {
             ResetHasPlayed();
-        });
+        });*/
 
     }
     private void Update()
@@ -44,14 +45,17 @@ public class Player : NetworkBehaviour
     {
         if (!IsOwner) return;
         playerChose.Value = i;
-        hasPlayed.Value = true;       
+        hasPlayed.Value = true;
+        //Debug.Log("player: " + OwnerClientId + "Chose: " + playerChose.Value);
     }
 
     void ResetHasPlayed()
     {
         if (!IsOwner) return;
         hasPlayed.Value = false;
-        Debug.Log("id: " + OwnerClientId + " : " + hasPlayed.Value);
+        //Debug.Log("Resetted id: " + OwnerClientId + " : " + hasPlayed.Value);
     }
+
+
 
 }

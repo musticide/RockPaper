@@ -38,7 +38,7 @@ public class GameUI : MonoBehaviour
     {
         return playerButtons[i];
     }
-
+ 
     public void SetButtonState(bool state)
     {
         foreach(Button button in playerButtons)

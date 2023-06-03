@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.Events;
 using System;
+using UnityEngine.SceneManagement;
 
 public class Player : NetworkBehaviour
 {
@@ -12,9 +13,22 @@ public class Player : NetworkBehaviour
     public NetworkVariable<int> points = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     GameUI gameUI;
     ScoreTracker scoreTracker;
-    
-    private void Start()
+
+    private void OnEnable()
     {
+        DontDestroyOnLoad(this.gameObject);
+        //SceneManager.sceneLoaded += OnSceneLoaded;
+        NetworkManager.SceneManager.OnLoadComplete += delegate { OnSceneLoaded(); };
+    }
+
+    void OnSceneLoaded()
+    {
+        Initialize();
+    }
+
+    private void Initialize()
+    {
+        Debug.Log("Player Initialize was Called");
         gameUI = FindObjectOfType<GameUI>();
         scoreTracker = FindObjectOfType<ScoreTracker>();
         gameUI.GetButton(0).onClick.AddListener(() =>

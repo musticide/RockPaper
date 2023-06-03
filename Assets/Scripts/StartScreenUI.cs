@@ -7,14 +7,12 @@ using UnityEngine.SceneManagement;
 public class StartScreenUI : MonoBehaviour
 {
     [Header("Buttons")]
-    //[SerializeField] Button startButton;
     [SerializeField] Button quitButton;
     NetworkUI networkUI;
 
     private void Awake()
     {
-        /*startButton.onClick.AddListener(() => { StartRockPaperScissors(); });
-        networkUI = FindObjectOfType<NetworkUI>();*/
+
     }
 
     void StartRockPaperScissors()

@@ -32,6 +32,7 @@ public class NetworkUI : MonoBehaviour
             {
                 NetworkManager.Singleton.SceneManager.LoadScene("L_RockPaperScissors", UnityEngine.SceneManagement.LoadSceneMode.Single);
             }
+            
         });
     }
 }

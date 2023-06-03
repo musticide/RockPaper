@@ -14,9 +14,12 @@ public class ScoreTracker : NetworkBehaviour
     [SerializeField] TextMeshProUGUI clientIDText;
     GameUI gameUI;
 
-    public UnityEvent ResetEvent;    
+    public UnityEvent ResetEvent;
+    public UnityEvent GameOverEvent;
     NetworkVariable<bool> bothHavePlayed = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    NetworkVariable<bool> isDraw = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);    
+    NetworkVariable<bool> isDraw = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    NetworkVariable<bool> didPlayerOneWin = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    NetworkVariable<bool> gameOver = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     private void Update()
     {
         
@@ -31,6 +34,8 @@ public class ScoreTracker : NetworkBehaviour
     {
         bothHavePlayed.OnValueChanged = delegate { Invoke("CheckPoints", 0.3f); };
         isDraw.OnValueChanged = delegate { ResetParameters(); };
+        gameOver.OnValueChanged += delegate { GameOverEvent.Invoke(); };
+        gameOver.OnValueChanged += delegate { gameUI.SetWinnerText(didPlayerOneWin.Value); };
     }
     public void OnClientJoin()
     {        
@@ -48,7 +53,7 @@ public class ScoreTracker : NetworkBehaviour
             playerOne.points.OnValueChanged = delegate { UpdateScore(); };
             playerTwo.hasPlayed.OnValueChanged = delegate { Invoke("PlayerInputRecieved", 0.3f); };
             playerTwo.points.OnValueChanged = delegate { UpdateScore(); };
-
+            
         }       
     }
     void PlayerInputRecieved()
@@ -135,6 +140,7 @@ public class ScoreTracker : NetworkBehaviour
     void UpdateScore()
     {
         gameUI.UpdateScoreText(playerOne.points.Value, playerTwo.points.Value);
+        GameOverCheck();
     }
     void ResetParameters()
     {
@@ -143,4 +149,19 @@ public class ScoreTracker : NetworkBehaviour
         bothHavePlayed.Value = false;
         isDraw.Value = false;
     }
+
+    void GameOverCheck()
+    {
+        if (!IsServer) return;
+        if(playerOne.points.Value >= 3)
+        {
+            didPlayerOneWin.Value = true;
+            gameOver.Value = true;  
+        }
+        else if (playerTwo.points.Value >= 3)
+        {
+            didPlayerOneWin.Value = false;
+            gameOver.Value = true;
+        }
+    }   
 }    

@@ -9,12 +9,23 @@ public class GameUI : MonoBehaviour
 {
     [Header("Buttons")]
 
-    [SerializeField] Button[] playerButtons = new Button[3];
+    [SerializeField] Button[] playerButtons = new Button[3];    
+    [SerializeField] Button playAgainButton;
+    [SerializeField] Button pauseButton;
+    [SerializeField] Button resumeButton;
+    [SerializeField] Button restartGameButton;
+    [SerializeField] Button exitToMainMenuButton;
+    [SerializeField] Button leaveGameButton;
+
+    [Header("Text")]
     [SerializeField] TextMeshProUGUI pOnePointsText;
     [SerializeField] TextMeshProUGUI pTwoPointsText;
+    [SerializeField] TextMeshProUGUI winnerText;
 
+    [Header("Canvases")]
     [SerializeField] GameObject pauseMenu;
     [SerializeField] GameObject playScreen;
+    [SerializeField] GameObject endScreen;
 
     ScoreTracker scoreTracker;
     Player player;
@@ -22,17 +33,42 @@ public class GameUI : MonoBehaviour
     private void Awake()
     {
         scoreTracker = FindObjectOfType<ScoreTracker>();
-        //Initialize();
-    }
-
-    public void SetPauseMenu()
+        playScreen.SetActive(true);
+        pauseMenu.SetActive(false);
+        endScreen.SetActive(false);
+        Initialize();
+    }    
+    void Initialize()
     {
-
+        playAgainButton.onClick.AddListener(() =>
+        {
+            NetworkManager.Singleton.SceneManager.LoadScene("L_RockPaperScissors", UnityEngine.SceneManagement.LoadSceneMode.Single);
+        });
+        restartGameButton.onClick.AddListener(() =>
+        {
+            NetworkManager.Singleton.SceneManager.LoadScene("L_RockPaperScissors", UnityEngine.SceneManagement.LoadSceneMode.Single);
+        });
+        pauseButton.onClick.AddListener(() => 
+        {
+            PauseGame();
+        });
+        resumeButton.onClick.AddListener(() =>
+        {
+            ResumeGame();
+        });
+        scoreTracker.GameOverEvent.AddListener(() =>
+        {
+            EndGame();
+        });
+        leaveGameButton.onClick.AddListener(() =>
+        {
+            NetworkManager.Singleton.SceneManager.LoadScene("L_StartScreen", UnityEngine.SceneManagement.LoadSceneMode.Single);
+        });
+        exitToMainMenuButton.onClick.AddListener(() =>
+        {
+            NetworkManager.Singleton.SceneManager.LoadScene("L_StartScreen", UnityEngine.SceneManagement.LoadSceneMode.Single);
+        });
     }
-    /*void Initialize()
-    {
-        
-    }*/
 
     public Button GetButton(int i)
     {
@@ -51,5 +87,34 @@ public class GameUI : MonoBehaviour
     {
         pOnePointsText.text = "Player One: " + playerOnePoints;
         pTwoPointsText.text = "Player Two: " + playerTwoPoints;
+    }
+
+    void PauseGame()
+    {
+        pauseMenu.SetActive(true);
+        playScreen.SetActive(false);
+    }
+    void ResumeGame()
+    {
+        pauseMenu.SetActive(false);
+        playScreen.SetActive(true);
+    }
+    public void EndGame()
+    {
+        pauseMenu.SetActive(false);
+        playScreen.SetActive(false);
+        endScreen.SetActive(true);
+    }
+
+    public void SetWinnerText(bool didPlayerOneWin)
+    {
+        if (didPlayerOneWin)
+        {
+            winnerText.text = "Player One Wins";
+        }
+        else
+        {
+            winnerText.text = "Player Two Wins";
+        }
     }
 }

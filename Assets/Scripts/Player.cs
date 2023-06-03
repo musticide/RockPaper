@@ -17,13 +17,17 @@ public class Player : NetworkBehaviour
     private void OnEnable()
     {
         DontDestroyOnLoad(this.gameObject);
-        //SceneManager.sceneLoaded += OnSceneLoaded;
-        NetworkManager.SceneManager.OnLoadComplete += delegate { OnSceneLoaded(); };
+        //SceneManager.sceneLoaded += OnSceneLoaded;        
+        NetworkManager.Singleton.SceneManager.OnLoadComplete += delegate { OnSceneLoaded(); };        
     }
 
     void OnSceneLoaded()
-    {
+    {        
+        if (!IsOwner) return;
+        if (FindObjectOfType<GameUI>() == null) return;
         Initialize();
+        points.Value = 0;
+        hasPlayed.Value = false;
     }
 
     private void Initialize()
@@ -50,11 +54,7 @@ public class Player : NetworkBehaviour
         });
 
     }
-    private void Update()
-    {
-        //Debug.Log(OwnerClientId + "; " + "Has played: " + hasPlayed.Value + "int: " + playerChose.Value);
-    }
-
+ 
     private void SetPlayerChose(int i)
     {
         if (!IsOwner) return;
@@ -71,7 +71,4 @@ public class Player : NetworkBehaviour
         gameUI.SetButtonState(true);
         //Debug.Log("Resetted id: " + OwnerClientId + " : " + hasPlayed.Value);
     }
-
-
-
 }

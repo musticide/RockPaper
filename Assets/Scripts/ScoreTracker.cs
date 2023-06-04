@@ -28,6 +28,7 @@ public class ScoreTracker : NetworkBehaviour
     {
         Initialize();
         gameUI = FindObjectOfType<GameUI>();
+
     }
 
     void Initialize()
@@ -53,7 +54,9 @@ public class ScoreTracker : NetworkBehaviour
             playerOne.points.OnValueChanged = delegate { UpdateScore(); };
             playerTwo.hasPlayed.OnValueChanged = delegate { Invoke("PlayerInputRecieved", 0.3f); };
             playerTwo.points.OnValueChanged = delegate { UpdateScore(); };
-            
+            if (!IsServer) return;
+            playerOne.points.Value = 0;
+            playerTwo.points.Value = 0;
         }       
     }
     void PlayerInputRecieved()

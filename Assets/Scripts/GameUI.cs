@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameUI : MonoBehaviour
 {
@@ -62,11 +63,11 @@ public class GameUI : MonoBehaviour
         });
         leaveGameButton.onClick.AddListener(() =>
         {
-            NetworkManager.Singleton.SceneManager.LoadScene("L_StartScreen", UnityEngine.SceneManagement.LoadSceneMode.Single);
+            LeaveGame();
         });
         exitToMainMenuButton.onClick.AddListener(() =>
         {
-            NetworkManager.Singleton.SceneManager.LoadScene("L_StartScreen", UnityEngine.SceneManagement.LoadSceneMode.Single);
+            LeaveGame();
         });
     }
 
@@ -93,6 +94,10 @@ public class GameUI : MonoBehaviour
     {
         pauseMenu.SetActive(true);
         playScreen.SetActive(false);
+        if (!NetworkManager.Singleton.IsHost)
+        {
+            restartGameButton.interactable = false;
+        }
     }
     void ResumeGame()
     {
@@ -104,6 +109,10 @@ public class GameUI : MonoBehaviour
         pauseMenu.SetActive(false);
         playScreen.SetActive(false);
         endScreen.SetActive(true);
+        if (!NetworkManager.Singleton.IsHost)
+        {
+            playAgainButton.interactable = false;
+        }
     }
 
     public void SetWinnerText(bool didPlayerOneWin)
@@ -115,6 +124,19 @@ public class GameUI : MonoBehaviour
         else
         {
             winnerText.text = "Player Two Wins";
+        }
+    }
+
+    void LeaveGame()
+    {
+        if (NetworkManager.Singleton.IsHost)
+        {
+            NetworkManager.Singleton.SceneManager.LoadScene("L_StartScreen", UnityEngine.SceneManagement.LoadSceneMode.Single);
+        }
+        else
+        {
+            NetworkManager.Singleton.Shutdown();
+            SceneManager.LoadScene("L_StartScreen");
         }
     }
 }

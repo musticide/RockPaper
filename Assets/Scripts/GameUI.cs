@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using Unity.Netcode;
 using TMPro;
+using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameUI : MonoBehaviour
 {
@@ -22,32 +20,37 @@ public class GameUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI pOnePointsText;
     [SerializeField] TextMeshProUGUI pTwoPointsText;
     [SerializeField] TextMeshProUGUI winnerText;
+    
+    [Header("Image")]
+    [SerializeField] Sprite[] rpsSprites = new Sprite[3];
+    [SerializeField] Sprite waitSprite;
+    [SerializeField] Image playerOneImage;
+    [SerializeField] Image playerTwoImage;
 
     [Header("Canvases")]
     [SerializeField] GameObject pauseMenu;
     [SerializeField] GameObject playScreen;
     [SerializeField] GameObject endScreen;
 
-    ScoreTracker scoreTracker;
-    Player player;
+    ScoreTracker scoreTracker;    
 
     private void Awake()
     {
         scoreTracker = FindObjectOfType<ScoreTracker>();
-        playScreen.SetActive(true);
-        pauseMenu.SetActive(false);
-        endScreen.SetActive(false);
+        StartGameUI();
         Initialize();
     }    
     void Initialize()
     {
         playAgainButton.onClick.AddListener(() =>
         {
-            NetworkManager.Singleton.SceneManager.LoadScene("L_RockPaperScissors", UnityEngine.SceneManagement.LoadSceneMode.Single);
+            scoreTracker.RestartGameMethod();
+            StartGameUI();
         });
         restartGameButton.onClick.AddListener(() =>
         {
-            NetworkManager.Singleton.SceneManager.LoadScene("L_RockPaperScissors", UnityEngine.SceneManagement.LoadSceneMode.Single);
+            scoreTracker.RestartGameMethod();
+            StartGameUI();
         });
         pauseButton.onClick.AddListener(() => 
         {
@@ -87,9 +90,31 @@ public class GameUI : MonoBehaviour
     public void UpdateScoreText(int playerOnePoints, int playerTwoPoints)
     {
         pOnePointsText.text = "Player One: " + playerOnePoints;
-        pTwoPointsText.text = "Player Two: " + playerTwoPoints;
+        pTwoPointsText.text = "Player Two: " + playerTwoPoints;        
     }
 
+    public void SetPlayerOnesprite(int playerChose)
+    {
+        playerOneImage.sprite = rpsSprites[playerChose];
+    }
+
+    public void SetPlayerTwosprite(int playerChose)
+    {
+        playerTwoImage.sprite = rpsSprites[playerChose];
+    }
+
+    public void ResetPlayerSprites()
+    {
+        playerOneImage.sprite = waitSprite;
+        playerTwoImage.sprite = waitSprite;
+    }
+
+    void StartGameUI()
+    {
+        playScreen.SetActive(true);
+        pauseMenu.SetActive(false);
+        endScreen.SetActive(false);
+    }
     void PauseGame()
     {
         pauseMenu.SetActive(true);

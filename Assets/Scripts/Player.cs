@@ -1,10 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Unity.Netcode;
-using UnityEngine.Events;
-using System;
-using UnityEngine.SceneManagement;
+using UnityEngine;
 
 public class Player : NetworkBehaviour
 {

@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Unity.Netcode;
-using System;
-using UnityEngine.Events;
 using TMPro;
+using Unity.Netcode;
+using UnityEngine;
+using UnityEngine.Events;
 
 public class ScoreTracker : NetworkBehaviour
 {    
@@ -16,14 +13,14 @@ public class ScoreTracker : NetworkBehaviour
 
     public UnityEvent ResetEvent;
     public UnityEvent GameOverEvent;
+    public UnityEvent GameRestartEvent;
+
+    //server variables
     NetworkVariable<bool> bothHavePlayed = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     NetworkVariable<bool> isDraw = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     NetworkVariable<bool> didPlayerOneWin = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     NetworkVariable<bool> gameOver = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    private void Update()
-    {
-        
-    }
+    NetworkVariable<bool> restartGame = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     private void Awake()
     {
         Initialize();
@@ -33,10 +30,11 @@ public class ScoreTracker : NetworkBehaviour
 
     void Initialize()
     {
-        bothHavePlayed.OnValueChanged = delegate { Invoke("CheckPoints", 0.3f); };
+        bothHavePlayed.OnValueChanged = delegate { Invoke("CheckPoints", 0.3f); Invoke("UpdatePlayerSprites", 0f); };
         isDraw.OnValueChanged = delegate { ResetParameters(); };
         gameOver.OnValueChanged += delegate { GameOverEvent.Invoke(); };
         gameOver.OnValueChanged += delegate { gameUI.SetWinnerText(didPlayerOneWin.Value); };
+        restartGame.OnValueChanged += delegate { ResetAll(); };
     }
     public void OnClientJoin()
     {        
@@ -122,9 +120,21 @@ public class ScoreTracker : NetworkBehaviour
                 }
                 break;
         }
-        ResetParameters();
+        Invoke("ResetParameters", 2f);
     }
 
+    void UpdatePlayerSprites()
+    {
+        if (bothHavePlayed.Value)
+        {
+            gameUI.SetPlayerOnesprite(playerOne.playerChose.Value);
+            gameUI.SetPlayerTwosprite(playerTwo.playerChose.Value);
+        }
+        else
+        {
+            gameUI.ResetPlayerSprites();
+        }
+    }
     void IncrementPlayerOnePoints()
     {
         Debug.Log("1 points was called");
@@ -150,7 +160,7 @@ public class ScoreTracker : NetworkBehaviour
         ResetEvent.Invoke();
         if (!IsServer) return;
         bothHavePlayed.Value = false;
-        isDraw.Value = false;
+        isDraw.Value = false;        
     }
 
     void GameOverCheck()
@@ -166,5 +176,28 @@ public class ScoreTracker : NetworkBehaviour
             didPlayerOneWin.Value = false;
             gameOver.Value = true;
         }
-    }   
+    }
+    
+    public void ResetAll()
+    {        
+        if (IsServer)
+        {
+            isDraw.Value = false;
+            bothHavePlayed.Value = false;
+            playerOne.points.Value = 0;
+            playerTwo.points.Value = 0;
+            restartGame.Value = false;
+        }
+        else
+        {
+            if (!IsOwner) return;
+            playerOne.hasPlayed.Value = false;
+            playerTwo.hasPlayed.Value = false;
+        }
+    }
+     public void RestartGameMethod()
+    {
+        NetworkManager.Singleton.SceneManager.LoadScene("L_RockPaperScissors", UnityEngine.SceneManagement.LoadSceneMode.Single);
+        ResetAll();
+    }
 }    

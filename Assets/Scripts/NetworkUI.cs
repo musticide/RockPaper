@@ -1,15 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
-using UnityEngine;
-using UnityEngine.UI;
+using Unity.Netcode.Transports.UTP;
+using Unity.Networking.Transport.Relay;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
-using TMPro;
-using Unity.Networking.Transport.Relay;
-using Unity.Netcode.Transports.UTP;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class NetworkUI : MonoBehaviour
 {
@@ -21,13 +19,18 @@ public class NetworkUI : MonoBehaviour
     [SerializeField] Button hostMainMenuButton;
     [SerializeField] Button clientMainMenuButton;
     [SerializeField] Button exitGameButton;
+
     [Header("Text")]
     [SerializeField] TMP_InputField joinCodeField;
     [SerializeField] TextMeshProUGUI joinCodeText;
+    [SerializeField] TextMeshProUGUI clientHasJoinedMsg;
+
     [Header("Canvases")]
     [SerializeField] Canvas mainMenuCanvas;
     [SerializeField] Canvas joinGameCanvas;
     [SerializeField] Canvas startGameCanvas;
+
+    bool gameIsHosted = false;
 
     private async void Awake()
     {
@@ -61,6 +64,7 @@ public class NetworkUI : MonoBehaviour
             if(playerArray.Length > 1)
             {
                 NetworkManager.Singleton.SceneManager.LoadScene("L_RockPaperScissors", UnityEngine.SceneManagement.LoadSceneMode.Single);
+                startGameButton.interactable = false;
             }  
         });
 
@@ -77,7 +81,12 @@ public class NetworkUI : MonoBehaviour
         {
             Application.Quit();
         });
+        
+        NetworkManager.Singleton.OnClientConnectedCallback += delegate { ClientConnected(); } ;
+        NetworkManager.Singleton.OnClientDisconnectCallback += delegate { ClientDisconnected(); };
     }
+
+
 
     async void StartHostRelay()
     {
@@ -114,6 +123,8 @@ public class NetworkUI : MonoBehaviour
     {
         mainMenuCanvas.gameObject.SetActive(false);
         startGameCanvas.gameObject.SetActive(true);
+        clientHasJoinedMsg.alpha = 0;
+        startGameButton.interactable = false;
     }
 
     void ClientPage()
@@ -129,5 +140,25 @@ public class NetworkUI : MonoBehaviour
         startGameCanvas.gameObject.SetActive(false);
         if (!NetworkManager.Singleton.isActiveAndEnabled) return;
         NetworkManager.Singleton.Shutdown();
+        gameIsHosted = false;
+    }
+    void ClientConnected()
+    {
+        Debug.Log("Client Connected");
+        if (!gameIsHosted)
+        {
+            gameIsHosted = true;
+        }
+        else
+        {
+            startGameButton.interactable = true;
+            clientHasJoinedMsg.text = "Client Joined!";
+            clientHasJoinedMsg.alpha = 1;
+        }
+    }
+
+    void ClientDisconnected()
+    {
+        clientHasJoinedMsg.text = "Client Left";
     }
 }
